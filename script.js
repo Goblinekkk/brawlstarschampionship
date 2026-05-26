@@ -1,115 +1,270 @@
-import { app } from './firebase-config.js';
+import { app } from "./firebase-config.js";
 
 import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
   onAuthStateChanged
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
 import {
   getFirestore,
   doc,
   setDoc,
+  getDocs,
   collection,
-  getDocs
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  updateDoc,
+  onSnapshot
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const auth = getAuth(app);
-
 const db = getFirestore(app);
-
 const provider = new GoogleAuthProvider();
 
-const googleLogin =
-document.getElementById('googleLogin');
+let user = null;
 
-const profile =
-document.getElementById('profile');
+/* ---------------- UI ---------------- */
 
-const avatar =
-document.getElementById('avatar');
+window.showTab = function(tab){
 
-const name =
-document.getElementById('name');
+  document.querySelectorAll(".tab")
+  .forEach(t => t.classList.add("hidden"));
 
-const tag =
-document.getElementById('tag');
-
-const saveTag =
-document.getElementById('saveTag');
-
-const players =
-document.getElementById('players');
-
-let currentUser = null;
-
-googleLogin.onclick = async () => {
-
-  await signInWithPopup(auth, provider);
-
+  document.getElementById(tab + "Tab")
+  .classList.remove("hidden");
 };
 
-onAuthStateChanged(auth, (user) => {
+/* ---------------- LOGIN ---------------- */
 
-  if(user){
+document.getElementById("googleLogin")
+.onclick = () => signInWithPopup(auth, provider);
 
-    currentUser = user;
+/* ---------------- AUTH ---------------- */
 
-    profile.classList.remove('hidden');
+onAuthStateChanged(auth, async (u) => {
 
-    avatar.src = user.photoURL;
+  if(!u) return;
 
-    name.innerText = user.displayName;
+  user = u;
 
-  }
+  document.getElementById("profile")
+  .classList.remove("hidden");
 
+  document.getElementById("avatar").src = u.photoURL;
+  document.getElementById("name").innerText = u.displayName;
+
+  loadEvents();
+  loadPlayers();
 });
 
-saveTag.onclick = async () => {
+/* ---------------- SAVE PLAYER ---------------- */
 
-  if(!currentUser) return;
+document.getElementById("saveTag")
+.onclick = async () => {
 
-  await setDoc(
-    doc(db, "players", currentUser.uid),
-    {
-      name: currentUser.displayName,
-      tag: tag.value,
-      photo: currentUser.photoURL
-    }
-  );
+  const tag = document.getElementById("tag").value;
 
+  if(!tag.startsWith("#")){
+    alert("Tag must start with #");
+    return;
+  }
+
+  await setDoc(doc(db,"players",user.uid),{
+    name:user.displayName,
+    tag:tag,
+    photo:user.photoURL
+  });
+
+  alert("Saved!");
   loadPlayers();
+};
+
+/* ---------------- EVENTS REALTIME ---------------- */
+
+function loadEvents(){
+
+  onSnapshot(collection(db,"events"),(snap)=>{
+
+    renderEvents(snap.docs);
+    renderLive(snap.docs);
+    renderFree(snap.docs);
+  });
+}
+
+/* ---------------- RENDER EVENTS ---------------- */
+
+function renderEvents(docs){
+
+  const el = document.getElementById("eventsTab");
+  el.innerHTML = "";
+
+  docs.forEach(d => {
+
+    const data = d.data();
+    const count = data.participants?.length || 0;
+
+    el.innerHTML += `
+      <div class="event">
+        <h3>${data.name}</h3>
+        <p>${count}/${data.maxPlayers}</p>
+        <p>${data.prize}</p>
+        <p>${data.description}</p>
+
+        <button class="joinBtn"
+        onclick="joinEvent('${d.id}')">
+          Join
+        </button>
+      </div>
+    `;
+  });
+}
+
+/* ---------------- LIVE EVENTS ---------------- */
+
+function renderLive(docs){
+
+  const el = document.getElementById("liveTab");
+  el.innerHTML = "";
+
+  docs.forEach(d => {
+
+    const data = d.data();
+    const count = data.participants?.length || 0;
+
+    if(count > 0){
+
+      el.innerHTML += `
+        <div class="event">
+          <h3>🔴 ${data.name}</h3>
+          <p>${count}/${data.maxPlayers}</p>
+        </div>
+      `;
+    }
+  });
+}
+
+/* ---------------- FREE SLOTS ---------------- */
+
+function renderFree(docs){
+
+  const el = document.getElementById("freeTab");
+  el.innerHTML = "";
+
+  docs.forEach(d => {
+
+    const data = d.data();
+    const count = data.participants?.length || 0;
+
+    if(count < data.maxPlayers){
+
+      el.innerHTML += `
+        <div class="event">
+          <h3>${data.name}</h3>
+          <p>Free slots: ${data.maxPlayers - count}</p>
+        </div>
+      `;
+    }
+  });
+}
+
+/* ---------------- PLAYERS ---------------- */
+
+function loadPlayers(){
+
+  onSnapshot(collection(db,"players"),(snap)=>{
+
+    const el = document.getElementById("playersTab");
+    el.innerHTML = "";
+
+    snap.forEach(d => {
+
+      const data = d.data();
+
+      el.innerHTML += `
+        <div class="event">
+          <strong>${data.name}</strong>
+          <p>${data.tag}</p>
+        </div>
+      `;
+    });
+
+  });
+}
+
+/* ---------------- JOIN EVENT ---------------- */
+
+window.joinEvent = async function(id){
+
+  const ref = doc(db,"events",id);
+
+  const snap = await getDocs(collection(db,"events"));
+
+  let eventData = null;
+
+  snap.forEach(d=>{
+    if(d.id===id) eventData=d.data();
+  });
+
+  if(!eventData) return;
+
+  let participants = eventData.participants || [];
+
+  if(participants.includes(user.uid)){
+    alert("Already joined");
+    return;
+  }
+
+  if(participants.length >= eventData.maxPlayers){
+    alert("Event full");
+    return;
+  }
+
+  participants.push(user.uid);
+
+  await updateDoc(ref,{
+    participants
+  });
 
 };
 
-async function loadPlayers(){
+/* ---------------- ADMIN ---------------- */
 
-  players.innerHTML = "";
+window.adminLogin = function(){
 
-  const querySnapshot =
-  await getDocs(collection(db, "players"));
+  const pass = prompt("Admin password");
 
-  querySnapshot.forEach((docData) => {
+  if(pass==="Jahudka121"){
+    document.getElementById("adminPanel")
+    .classList.remove("hidden");
+  }
+};
 
-    const data = docData.data();
+/* CREATE EVENT */
 
-    const div =
-    document.createElement('div');
+document.getElementById("createEvent")
+.onclick = async () => {
 
-    div.className = "player";
+  const name =
+  document.getElementById("eventName").value;
 
-    div.innerHTML = `
-      <h3>${data.name}</h3>
-      <p>${data.tag}</p>
-    `;
+  const max =
+  document.getElementById("eventMax").value;
 
-    players.appendChild(div);
+  const prize =
+  document.getElementById("eventPrize").value;
 
+  const desc =
+  document.getElementById("eventDesc").value;
+
+  await setDoc(doc(collection(db,"events")),{
+    name,
+    maxPlayers:Number(max),
+    prize,
+    description:desc,
+    participants:[],
+    createdBy:user.displayName,
+    createdAt:Date.now()
   });
 
-}
-
-loadPlayers();
+  alert("Event created!");
+};
