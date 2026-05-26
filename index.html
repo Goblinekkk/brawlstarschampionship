@@ -1,75 +1,69 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-
   <meta charset="UTF-8">
-
-  <meta name="viewport"
-  content="width=device-width, initial-scale=1.0">
-
-  <title>Brawl Stars Czechia</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brawl Stars Czechia Esports</title>
   <link rel="stylesheet" href="style.css">
-
 </head>
+
 <body>
 
-  <div class="bgGlow"></div>
+<div class="container">
 
-  <div class="container">
+  <h1>BS Czechia Esports</h1>
 
-    <div class="card">
+  <!-- NAV MENU -->
+  <div class="menu">
+    <button onclick="showTab('events')">Events</button>
+    <button onclick="showTab('live')">Live Events</button>
+    <button onclick="showTab('players')">Players</button>
+    <button onclick="showTab('free')">Free Slots</button>
+    <button onclick="adminLogin()">Admin</button>
+  </div>
 
-      <h1>Brawl Stars Czechia</h1>
+  <!-- LOGIN -->
+  <div id="loginBox" class="card">
+    <button id="googleLogin">Sign in with Google</button>
+  </div>
 
-      <p class="subtitle">
-        Czech Community Tournament
-      </p>
+  <!-- PROFILE -->
+  <div id="profile" class="card hidden">
+    <img id="avatar">
+    <h3 id="name"></h3>
 
-      <button id="googleLogin">
-        Sign In with Google
-      </button>
+    <input id="tag" placeholder="#BRAWL_TAG">
+    <button id="saveTag">Save Player</button>
+  </div>
 
-      <button id="adminBtn">
-        Admin Panel
-      </button>
+  <!-- EVENTS -->
+  <div id="eventsTab" class="tab"></div>
 
-      <div id="profile" class="hidden">
+  <!-- LIVE -->
+  <div id="liveTab" class="tab hidden"></div>
 
-        <img id="avatar">
+  <!-- PLAYERS -->
+  <div id="playersTab" class="tab hidden"></div>
 
-        <h2 id="name"></h2>
+  <!-- FREE -->
+  <div id="freeTab" class="tab hidden"></div>
 
-        <input
-          id="tag"
-          placeholder="#2PPQ8YV"
-        >
+  <!-- ADMIN -->
+  <div id="adminPanel" class="card hidden">
 
-        <button id="registerBtn">
-          Register Tournament
-        </button>
+    <h2>Create Event</h2>
 
-      </div>
+    <input id="eventName" placeholder="Event name">
+    <input id="eventMax" placeholder="Max players">
+    <input id="eventPrize" placeholder="Prize">
+    <input id="eventDesc" placeholder="Description">
 
-    </div>
-
-    <div id="players"></div>
-
-    <div
-      id="adminPanel"
-      class="card hidden"
-    >
-
-      <h2>Admin Panel</h2>
-
-      <div id="adminPlayers"></div>
-
-    </div>
+    <button id="createEvent">Create Event</button>
 
   </div>
 
-  <script type="module"
-  src="script.js"></script>
+</div>
 
+<script type="module" src="script.js"></script>
 </body>
 </html>
