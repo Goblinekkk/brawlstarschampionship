@@ -1,64 +1,73 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Brawl Stars Czechia Esports</title>
-  <link rel="stylesheet" href="style.css">
-</head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>BS Championship CZ</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
 <body>
 
-<div class="container">
+<!-- LOADING -->
+<div id="loadingScreen">
+  <h1>Český Brawl Stars Championship</h1>
+  <div class="loader"></div>
+</div>
 
-  <h1>BS Czechia Esports</h1>
+<!-- LOGIN -->
+<div id="loginScreen" class="hidden">
+  <h1>Český Brawl Stars Championship</h1>
 
-  <!-- NAV MENU -->
-  <div class="menu">
-    <button onclick="showTab('events')">Events</button>
-    <button onclick="showTab('live')">Live Events</button>
-    <button onclick="showTab('players')">Players</button>
-    <button onclick="showTab('free')">Free Slots</button>
-    <button onclick="adminLogin()">Admin</button>
+  <button id="googleLogin" class="googleBtn">
+    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg">
+    Přihlásit se pomocí Google
+  </button>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="menuBtn" id="menuBtn">☰</div>
+    <h2>BS Championship</h2>
   </div>
 
-  <!-- LOGIN -->
-  <div id="loginBox" class="card">
-    <button id="googleLogin">Sign in with Google</button>
+  <!-- SIDEBAR -->
+  <div id="sidebar" class="sidebar hidden">
+
+    <div onclick="showTab('live')">🔴 Probíhající eventy</div>
+    <div onclick="showTab('upcoming')">🟡 Nadcházející eventy</div>
+    <div onclick="showTab('players')">👥 Hráči</div>
+
+    <div class="adminSmall" onclick="openAdmin()">
+      Admin
+    </div>
+
   </div>
 
-  <!-- PROFILE -->
-  <div id="profile" class="card hidden">
-    <img id="avatar">
-    <h3 id="name"></h3>
+  <!-- CONTENT -->
+  <div class="container">
 
-    <input id="tag" placeholder="#BRAWL_TAG">
-    <button id="saveTag">Save Player</button>
+    <div id="live" class="tab"></div>
+    <div id="upcoming" class="tab hidden"></div>
+    <div id="players" class="tab hidden"></div>
+
   </div>
 
-  <!-- EVENTS -->
-  <div id="eventsTab" class="tab"></div>
+  <!-- ADMIN PANEL -->
+  <div id="adminPanel" class="admin hidden">
 
-  <!-- LIVE -->
-  <div id="liveTab" class="tab hidden"></div>
+    <h2>Vytvořit Event</h2>
 
-  <!-- PLAYERS -->
-  <div id="playersTab" class="tab hidden"></div>
+    <input id="eventName" placeholder="Název eventu">
+    <input id="eventMax" placeholder="Max hráčů">
+    <input id="eventPrize" placeholder="O co se hraje">
 
-  <!-- FREE -->
-  <div id="freeTab" class="tab hidden"></div>
-
-  <!-- ADMIN -->
-  <div id="adminPanel" class="card hidden">
-
-    <h2>Create Event</h2>
-
-    <input id="eventName" placeholder="Event name">
-    <input id="eventMax" placeholder="Max players">
-    <input id="eventPrize" placeholder="Prize">
-    <input id="eventDesc" placeholder="Description">
-
-    <button id="createEvent">Create Event</button>
+    <button id="createEvent">Vytvořit</button>
 
   </div>
 
