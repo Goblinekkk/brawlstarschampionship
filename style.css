@@ -1,166 +1,142 @@
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Arial, sans-serif;
-}
-
 body{
-  background: radial-gradient(circle at top, #0f172a, #020617);
+  margin:0;
+  font-family:Arial;
+  background:black;
   color:white;
-  min-height:100vh;
-  overflow-x:hidden;
 }
 
-/* glow background */
-body::before{
-  content:"";
+/* LOADING */
+#loadingScreen{
   position:fixed;
-  width:600px;
-  height:600px;
-  background:linear-gradient(135deg,#ffcc00,#ff0066);
-  filter:blur(160px);
-  opacity:0.15;
-  top:-200px;
-  right:-200px;
-  z-index:-1;
+  inset:0;
+  background:black;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
 }
 
-.container{
-  width:90%;
-  max-width:520px;
-  margin:auto;
-  padding-top:30px;
-}
-
-/* TITLE */
-h1{
+#loadingScreen h1{
+  color:#ffcc00;
   text-align:center;
-  font-size:2.3rem;
-  background:linear-gradient(90deg,#ffcc00,#ff6a00);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  margin-bottom:20px;
 }
 
-/* CARD STYLE */
-.card{
-  background:rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:24px;
-  padding:20px;
-  backdrop-filter:blur(18px);
-  box-shadow:0 10px 40px rgba(0,0,0,0.5);
-  margin-bottom:15px;
-  animation:fadeUp 0.5s ease;
+.loader{
+  width:50px;
+  height:50px;
+  border:4px solid #333;
+  border-top:4px solid #ffcc00;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
 }
 
-/* MENU BUTTONS */
-.menu button{
-  background:rgba(255,255,255,0.08);
-  color:white;
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:14px;
-  padding:12px;
-  font-weight:bold;
-  transition:0.25s;
+@keyframes spin{
+  to{transform:rotate(360deg);}
 }
 
-.menu button:hover{
-  transform:translateY(-2px);
-  background:rgba(255,204,0,0.15);
-  border-color:#ffcc00;
+/* LOGIN */
+#loginScreen{
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  background:radial-gradient(circle,#111,#000);
 }
 
-/* INPUT */
-input{
-  width:100%;
+.googleBtn{
+  display:flex;
+  align-items:center;
+  gap:10px;
   padding:14px;
-  margin-top:10px;
+  border:none;
   border-radius:14px;
-  border:none;
-  background:#0f172a;
-  color:white;
-  outline:none;
-}
-
-/* MAIN BUTTONS */
-button{
-  width:100%;
-  padding:14px;
-  margin-top:12px;
-  border:none;
-  border-radius:16px;
+  background:white;
   font-weight:bold;
   cursor:pointer;
   transition:0.2s;
 }
 
-button:hover{
-  transform:scale(1.03);
+.googleBtn:hover{
+  transform:scale(1.05);
 }
 
-/* LOGIN BUTTON */
-#googleLogin{
-  background:white;
-  color:black;
+/* APP */
+.topbar{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:15px;
+  background:#111;
 }
 
-/* REGISTER */
-#saveTag{
-  background:linear-gradient(90deg,#ffcc00,#ff8800);
-  color:black;
+.menuBtn{
+  font-size:26px;
+  cursor:pointer;
 }
 
-/* ADMIN */
-#adminBtn{
+.sidebar{
+  position:fixed;
+  top:0;
+  left:0;
+  width:220px;
+  height:100%;
+  background:#0f172a;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+  animation:slide 0.3s ease;
+}
+
+@keyframes slide{
+  from{transform:translateX(-100%);}
+  to{transform:translateX(0);}
+}
+
+.sidebar div{
+  cursor:pointer;
+  padding:10px;
+  border-radius:10px;
+}
+
+.sidebar div:hover{
   background:#1e293b;
-  color:white;
 }
 
-/* EVENT BOX */
-.event{
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.08);
-  padding:14px;
-  border-radius:18px;
-  margin-top:10px;
-  transition:0.2s;
+/* ADMIN TEXT */
+.adminSmall{
+  margin-top:auto;
+  font-size:12px;
+  color:#999;
+  cursor:pointer;
 }
 
-.event:hover{
-  transform:scale(1.02);
-  border-color:#ffcc00;
+/* CONTENT */
+.container{
+  padding:15px;
 }
 
-/* JOIN BUTTON */
-.joinBtn{
-  background:linear-gradient(90deg,#ffcc00,#ff6a00);
-  color:black;
-  margin-top:10px;
+.tab{
+  display:block;
 }
 
-/* PLAYER BOX */
-.player{
-  background:rgba(255,255,255,0.05);
-  padding:14px;
-  border-radius:16px;
-  margin-top:10px;
-}
-
-/* ANIMATION */
-@keyframes fadeUp{
-  from{
-    opacity:0;
-    transform:translateY(10px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-}
-
-/* HIDE */
 .hidden{
   display:none;
+}
+
+/* EVENT */
+.event{
+  background:#111827;
+  padding:12px;
+  margin-top:10px;
+  border-radius:14px;
+}
+
+/* ADMIN PANEL */
+.admin{
+  position:fixed;
+  inset:0;
+  background:black;
+  padding:20px;
 }
