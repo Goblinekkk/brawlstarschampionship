@@ -1,46 +1,75 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="viewport"
+  content="width=device-width, initial-scale=1.0">
 
   <title>Brawl Stars Czechia</title>
 
   <link rel="stylesheet" href="style.css">
 
-  <script type="module" src="firebase-config.js"></script>
-  <script type="module" src="script.js"></script>
 </head>
 <body>
 
+  <div class="bgGlow"></div>
+
   <div class="container">
 
-    <h1>Brawl Stars Czechia</h1>
+    <div class="card">
 
-    <button id="googleLogin">
-      Sign In with Google
-    </button>
+      <h1>Brawl Stars Czechia</h1>
 
-    <div id="profile" class="hidden">
+      <p class="subtitle">
+        Czech Community Tournament
+      </p>
 
-      <img id="avatar">
-
-      <h2 id="name"></h2>
-
-      <input
-        id="tag"
-        placeholder="#2PPQ8YV"
-      >
-
-      <button id="saveTag">
-        Register
+      <button id="googleLogin">
+        Sign In with Google
       </button>
+
+      <button id="adminBtn">
+        Admin Panel
+      </button>
+
+      <div id="profile" class="hidden">
+
+        <img id="avatar">
+
+        <h2 id="name"></h2>
+
+        <input
+          id="tag"
+          placeholder="#2PPQ8YV"
+        >
+
+        <button id="registerBtn">
+          Register Tournament
+        </button>
+
+      </div>
 
     </div>
 
     <div id="players"></div>
 
+    <div
+      id="adminPanel"
+      class="card hidden"
+    >
+
+      <h2>Admin Panel</h2>
+
+      <div id="adminPlayers"></div>
+
+    </div>
+
   </div>
+
+  <script type="module"
+  src="script.js"></script>
 
 </body>
 </html>
