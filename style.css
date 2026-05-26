@@ -1,61 +1,74 @@
 body{
-  background:#0f172a;
-  color:white;
-  font-family:Arial;
   margin:0;
+  font-family:Arial;
+  background:#070b14;
+  color:white;
 }
 
 .container{
   width:90%;
   max-width:500px;
   margin:auto;
-  text-align:center;
-  padding-top:40px;
+  padding-top:30px;
 }
 
 h1{
+  text-align:center;
   color:#ffcc00;
 }
 
+.menu{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin:20px 0;
+}
+
 button{
-  width:100%;
-  padding:15px;
+  padding:12px;
   border:none;
-  border-radius:12px;
-  margin-top:15px;
-  font-size:16px;
+  border-radius:14px;
   font-weight:bold;
+  cursor:pointer;
 }
 
-#googleLogin{
-  background:white;
-}
-
-#saveTag{
-  background:#ffcc00;
+.card{
+  background:#111827;
+  padding:15px;
+  border-radius:18px;
+  margin-bottom:15px;
 }
 
 input{
   width:100%;
-  padding:15px;
+  margin-top:10px;
+  padding:12px;
+  border-radius:12px;
   border:none;
-  border-radius:12px;
-  margin-top:15px;
+  background:#1f2937;
+  color:white;
 }
 
-img{
-  width:90px;
-  border-radius:50%;
-  margin-top:20px;
-}
-
-.player{
-  background:#1e293b;
-  padding:15px;
-  border-radius:12px;
+.tab{
   margin-top:10px;
 }
 
-.hidden{
-  display:none;
+.event{
+  background:#0f172a;
+  padding:12px;
+  border-radius:14px;
+  margin-bottom:10px;
+}
+
+.joinBtn{
+  background:#ffcc00;
+  width:100%;
+  margin-top:10px;
+}
+
+.hidden{display:none;}
+
+img{
+  width:80px;
+  border-radius:50%;
 }
