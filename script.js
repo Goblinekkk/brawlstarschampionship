@@ -9,261 +9,124 @@ import {
 
 import {
   getFirestore,
-  doc,
-  setDoc,
-  getDocs,
   collection,
-  updateDoc,
-  onSnapshot
+  setDoc,
+  doc,
+  getDocs
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
-let user = null;
+/* LOADING */
+setTimeout(()=>{
+  document.getElementById("loadingScreen").style.display="none";
+  document.getElementById("loginScreen").classList.remove("hidden");
+},1500);
 
-/* ---------------- UI ---------------- */
+/* LOGIN */
+document.getElementById("googleLogin").onclick =
+()=> signInWithPopup(auth,provider);
 
-window.showTab = function(tab){
+/* AUTH */
+let user=null;
 
-  document.querySelectorAll(".tab")
-  .forEach(t => t.classList.add("hidden"));
+onAuthStateChanged(auth,(u)=>{
+  if(!u)return;
 
-  document.getElementById(tab + "Tab")
-  .classList.remove("hidden");
-};
+  user=u;
 
-/* ---------------- LOGIN ---------------- */
-
-document.getElementById("googleLogin")
-.onclick = () => signInWithPopup(auth, provider);
-
-/* ---------------- AUTH ---------------- */
-
-onAuthStateChanged(auth, async (u) => {
-
-  if(!u) return;
-
-  user = u;
-
-  document.getElementById("profile")
-  .classList.remove("hidden");
-
-  document.getElementById("avatar").src = u.photoURL;
-  document.getElementById("name").innerText = u.displayName;
+  document.getElementById("loginScreen").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
 
   loadEvents();
   loadPlayers();
 });
 
-/* ---------------- SAVE PLAYER ---------------- */
-
-document.getElementById("saveTag")
-.onclick = async () => {
-
-  const tag = document.getElementById("tag").value;
-
-  if(!tag.startsWith("#")){
-    alert("Tag must start with #");
-    return;
-  }
-
-  await setDoc(doc(db,"players",user.uid),{
-    name:user.displayName,
-    tag:tag,
-    photo:user.photoURL
-  });
-
-  alert("Saved!");
-  loadPlayers();
+/* MENU */
+document.getElementById("menuBtn").onclick=()=>{
+  document.getElementById("sidebar")
+  .classList.toggle("hidden");
 };
 
-/* ---------------- EVENTS REALTIME ---------------- */
+window.showTab=(id)=>{
+  document.querySelectorAll(".tab")
+  .forEach(t=>t.classList.add("hidden"));
 
-function loadEvents(){
+  document.getElementById(id).classList.remove("hidden");
+};
 
-  onSnapshot(collection(db,"events"),(snap)=>{
+/* EVENTS */
+async function loadEvents(){
 
-    renderEvents(snap.docs);
-    renderLive(snap.docs);
-    renderFree(snap.docs);
-  });
-}
+  const snap=await getDocs(collection(db,"events"));
 
-/* ---------------- RENDER EVENTS ---------------- */
+  const live=document.getElementById("live");
+  const up=document.getElementById("upcoming");
 
-function renderEvents(docs){
-
-  const el = document.getElementById("eventsTab");
-  el.innerHTML = "";
-
-  docs.forEach(d => {
-
-    const data = d.data();
-    const count = data.participants?.length || 0;
-
-    el.innerHTML += `
-      <div class="event">
-        <h3>${data.name}</h3>
-        <p>${count}/${data.maxPlayers}</p>
-        <p>${data.prize}</p>
-        <p>${data.description}</p>
-
-        <button class="joinBtn"
-        onclick="joinEvent('${d.id}')">
-          Join
-        </button>
-      </div>
-    `;
-  });
-}
-
-/* ---------------- LIVE EVENTS ---------------- */
-
-function renderLive(docs){
-
-  const el = document.getElementById("liveTab");
-  el.innerHTML = "";
-
-  docs.forEach(d => {
-
-    const data = d.data();
-    const count = data.participants?.length || 0;
-
-    if(count > 0){
-
-      el.innerHTML += `
-        <div class="event">
-          <h3>🔴 ${data.name}</h3>
-          <p>${count}/${data.maxPlayers}</p>
-        </div>
-      `;
-    }
-  });
-}
-
-/* ---------------- FREE SLOTS ---------------- */
-
-function renderFree(docs){
-
-  const el = document.getElementById("freeTab");
-  el.innerHTML = "";
-
-  docs.forEach(d => {
-
-    const data = d.data();
-    const count = data.participants?.length || 0;
-
-    if(count < data.maxPlayers){
-
-      el.innerHTML += `
-        <div class="event">
-          <h3>${data.name}</h3>
-          <p>Free slots: ${data.maxPlayers - count}</p>
-        </div>
-      `;
-    }
-  });
-}
-
-/* ---------------- PLAYERS ---------------- */
-
-function loadPlayers(){
-
-  onSnapshot(collection(db,"players"),(snap)=>{
-
-    const el = document.getElementById("playersTab");
-    el.innerHTML = "";
-
-    snap.forEach(d => {
-
-      const data = d.data();
-
-      el.innerHTML += `
-        <div class="event">
-          <strong>${data.name}</strong>
-          <p>${data.tag}</p>
-        </div>
-      `;
-    });
-
-  });
-}
-
-/* ---------------- JOIN EVENT ---------------- */
-
-window.joinEvent = async function(id){
-
-  const ref = doc(db,"events",id);
-
-  const snap = await getDocs(collection(db,"events"));
-
-  let eventData = null;
+  live.innerHTML="";
+  up.innerHTML="";
 
   snap.forEach(d=>{
-    if(d.id===id) eventData=d.data();
+
+    const e=d.data();
+
+    const div=`<div class="event">
+      <h3>${e.name}</h3>
+      <p>${e.prize}</p>
+    </div>`;
+
+    live.innerHTML+=div;
+    up.innerHTML+=div;
+
+  });
+}
+
+/* PLAYERS */
+async function loadPlayers(){
+
+  const snap=await getDocs(collection(db,"players"));
+
+  const el=document.getElementById("players");
+  el.innerHTML="";
+
+  snap.forEach(d=>{
+
+    const p=d.data();
+
+    el.innerHTML+=`
+      <div class="event">
+        <b>${p.name}</b>
+        <p>${p.tag}</p>
+      </div>
+    `;
+
   });
 
-  if(!eventData) return;
+}
 
-  let participants = eventData.participants || [];
+/* ADMIN */
+window.openAdmin=()=>{
 
-  if(participants.includes(user.uid)){
-    alert("Already joined");
-    return;
-  }
-
-  if(participants.length >= eventData.maxPlayers){
-    alert("Event full");
-    return;
-  }
-
-  participants.push(user.uid);
-
-  await updateDoc(ref,{
-    participants
-  });
-
-};
-
-/* ---------------- ADMIN ---------------- */
-
-window.adminLogin = function(){
-
-  const pass = prompt("Admin password");
+  const pass=prompt("Admin password");
 
   if(pass==="Jahudka121"){
+
     document.getElementById("adminPanel")
-    .classList.remove("hidden");
+    .style.display="block";
+
   }
+
 };
 
 /* CREATE EVENT */
-
-document.getElementById("createEvent")
-.onclick = async () => {
-
-  const name =
-  document.getElementById("eventName").value;
-
-  const max =
-  document.getElementById("eventMax").value;
-
-  const prize =
-  document.getElementById("eventPrize").value;
-
-  const desc =
-  document.getElementById("eventDesc").value;
+document.getElementById("createEvent").onclick=async()=>{
 
   await setDoc(doc(collection(db,"events")),{
-    name,
-    maxPlayers:Number(max),
-    prize,
-    description:desc,
-    participants:[],
-    createdBy:user.displayName,
-    createdAt:Date.now()
+    name:eventName.value,
+    max:eventMax.value,
+    prize:eventPrize.value
   });
 
   alert("Event created!");
