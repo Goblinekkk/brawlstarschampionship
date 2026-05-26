@@ -1,0 +1,61 @@
+body{
+  background:#0f172a;
+  color:white;
+  font-family:Arial;
+  margin:0;
+}
+
+.container{
+  width:90%;
+  max-width:500px;
+  margin:auto;
+  text-align:center;
+  padding-top:40px;
+}
+
+h1{
+  color:#ffcc00;
+}
+
+button{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:12px;
+  margin-top:15px;
+  font-size:16px;
+  font-weight:bold;
+}
+
+#googleLogin{
+  background:white;
+}
+
+#saveTag{
+  background:#ffcc00;
+}
+
+input{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:12px;
+  margin-top:15px;
+}
+
+img{
+  width:90px;
+  border-radius:50%;
+  margin-top:20px;
+}
+
+.player{
+  background:#1e293b;
+  padding:15px;
+  border-radius:12px;
+  margin-top:10px;
+}
+
+.hidden{
+  display:none;
+}
